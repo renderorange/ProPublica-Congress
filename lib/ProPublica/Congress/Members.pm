@@ -20,7 +20,7 @@ sub members {
         @_,
     };
 
-    foreach my $key ( keys %$args ) {
+    foreach my $key ( keys %{$args} ) {
         unless ( defined $args->{$key} ) {
             die "The $key argument is required";
         }
@@ -35,17 +35,17 @@ sub members {
     }
 
     if ( $args->{chamber} eq 'house' ) {
-        unless ( $args->{congress} >= 102 ) {
-            die 'The congress argument must be >= 102 for the house';
+        if ( !$args->{congress} >= HOUSE_MINIMUM ) {
+            die 'The congress argument must be >= ' . HOUSE_MINIMUM . ' for the house';
         }
     }
     else {
-        unless ( $args->{congress} >= 80 ) {
-            die 'The congress argument must be >= 80 for the senate';
+        if ( !$args->{congress} >= SENATE_MINIMUM ) {
+            die 'The congress argument must be >= ' . SENATE_MINIMUM . ' for the senate';
         }
     }
 
-    my $uri = 'https://api.propublica.org/congress/v1/' . $args->{congress} . '/' . $args->{chamber} . '/members.json';
+    my $uri = 'https://api.propublica.org/congress/v1/' . $args->{congress} . q{/} . $args->{chamber} . '/members.json';
 
     return $self->request( uri => $uri );
 }

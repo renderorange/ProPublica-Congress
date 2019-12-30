@@ -17,7 +17,7 @@ sub new {
 
     unless ( defined $args->{key} ) {
         die 'The key argument is required';
-    };
+    }
 
     return bless $args, $class;
 }
@@ -29,12 +29,8 @@ sub request {
         @_,
     };
 
-    my $http = HTTP::Tiny->new();
-    my $response = $http->request(
-        'GET',
-        $args->{uri},
-        { headers => { 'X-API-Key' => $self->{key} } },
-    );
+    my $http     = HTTP::Tiny->new();
+    my $response = $http->request( 'GET', $args->{uri}, { headers => { 'X-API-Key' => $self->{key} } }, );
 
     unless ( $response->{success} ) {
         die 'Request was not successful: ' . $response->{reason};
