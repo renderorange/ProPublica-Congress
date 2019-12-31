@@ -32,7 +32,7 @@ sub members {
         die 'The chamber argument must be either house or senate';
     }
 
-    unless ( $args->{congress} =~ m/\d+/ && $args->{congress} > 0 ) {
+    if ( $args->{congress} !~ m/^\d+$/ || $args->{congress} < 1 ) {
         die 'The congress argument must be a positive integer';
     }
 
