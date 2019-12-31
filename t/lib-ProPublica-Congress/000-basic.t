@@ -11,7 +11,7 @@ use_ok( $class );
 
 my @required_modules = qw{
     HTTP::Tiny
-    JSON::MaybeXS
+    JSON::Tiny
 };
 
 foreach ( @required_modules ) {

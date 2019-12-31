@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use HTTP::Tiny;
-use JSON::MaybeXS;
+use JSON::Tiny;
 
 our $VERSION = '0.01';
 
@@ -36,7 +36,7 @@ sub request {
         die 'Request was not successful: ' . $response->{reason};
     }
 
-    return JSON::MaybeXS::decode_json( $response->{content} );
+    return JSON::Tiny::decode_json( $response->{content} );
 }
 
 1;
@@ -103,7 +103,7 @@ Hashref of decoded JSON from the request to the ProPublica API.
 
 =item HTTP::Tiny
 
-=item JSON::MaybeXS
+=item JSON::Tiny
 
 =back
 
