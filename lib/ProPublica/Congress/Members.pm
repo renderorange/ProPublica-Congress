@@ -37,12 +37,12 @@ sub members {
     }
 
     if ( $args->{chamber} eq 'house' ) {
-        if ( !$args->{congress} >= HOUSE_MINIMUM ) {
+        if ( $args->{congress} < HOUSE_MINIMUM ) {
             die 'The congress argument must be >= ' . HOUSE_MINIMUM . ' for the house';
         }
     }
     else {
-        if ( !$args->{congress} >= SENATE_MINIMUM ) {
+        if ( $args->{congress} < SENATE_MINIMUM ) {
             die 'The congress argument must be >= ' . SENATE_MINIMUM . ' for the senate';
         }
     }
