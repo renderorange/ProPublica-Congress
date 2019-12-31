@@ -1,0 +1,11 @@
+#!/bin/bash
+
+export TEST_AUTHOR=1
+
+rm -rf cover_db
+PERL5OPT=-MDevel::Cover=-ignore,"t/",+ignore,"prove",-coverage,statement,branch,condition,path,subroutine prove -wmlr t/
+cover
+
+export TEST_AUTHOR=0
+
+python -m SimpleHTTPServer 8000
