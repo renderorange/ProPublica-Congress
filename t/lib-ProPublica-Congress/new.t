@@ -2,6 +2,7 @@ use strict;
 use warnings;
 
 use Test::More;
+use Test::Exception;
 
 use FindBin;
 use lib "$FindBin::Bin/../../lib";
@@ -23,6 +24,18 @@ HAPPY_PATH: {
     );
 
     can_ok( $class, $_ ) foreach @methods;
+}
+
+EXCEPTIONS: {
+    note( 'exceptions' );
+
+    dies_ok { ProPublica::Congress->new() }
+              'dies if key undefined';
+    like $@, qr/The key argument is required/,
+         'exception indicates key is required';
+
+    dies_ok { ProPublica::Congress->new( key => '' ) }
+              'dies if key is empty string';
 }
 
 done_testing();
