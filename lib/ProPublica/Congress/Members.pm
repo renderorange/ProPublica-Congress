@@ -26,6 +26,8 @@ sub members {
         }
     }
 
+    $args->{chamber} = lc $args->{chamber};
+
     unless ( $args->{chamber} eq 'house' || $args->{chamber} eq 'senate' ) {
         die 'The chamber argument must be either house or senate';
     }
