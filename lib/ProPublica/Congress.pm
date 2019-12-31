@@ -15,7 +15,7 @@ sub new {
         @_,
     };
 
-    unless ( defined $args->{key} ) {
+    if ( !defined $args->{key} || $args->{key} eq '' ) {
         die 'The key argument is required';
     }
 
