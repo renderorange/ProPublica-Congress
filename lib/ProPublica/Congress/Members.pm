@@ -21,7 +21,7 @@ sub members {
     };
 
     foreach my $key ( keys %{$args} ) {
-        unless ( defined $args->{$key} ) {
+        if ( !defined $args->{$key} || $args->{$key} eq q{} ) {
             die "The $key argument is required";
         }
     }
