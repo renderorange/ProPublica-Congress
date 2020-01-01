@@ -22,7 +22,7 @@ HAPPY_PATH: {
     # we're also testing here the access to the parent methods.
     my @methods = qw(
         request
-        members
+        get_members
     );
 
     can_ok( $class, $_ ) foreach @methods;

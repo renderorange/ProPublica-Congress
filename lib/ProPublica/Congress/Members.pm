@@ -12,7 +12,7 @@ use constant {
     SENATE_MINIMUM => 80,
 };
 
-sub members {
+sub get_members {
     my $self = shift;
     my $args = {
         congress => undef,
@@ -67,7 +67,6 @@ ProPublica::Congress::Members - request congress member information from ProPubl
  use ProPublica::Congress::Members;
 
  my $members_obj = ProPublica::Congress::Members->new( key => 'apikeyGOEShere' );
- my $members = $members_obj->members( congress => '116', chamber => 'house' );
 
 =head1 DESCRIPTION
 
@@ -75,7 +74,7 @@ This module is used to request congress member information from ProPublica's Con
 
 =head1 SUBROUTINES/METHODS
 
-=head2 members
+=head2 get_members
 
 Verifies arguments and creates the uri to pass to L<ProPublica::Congress>'s C<request> method.
 
