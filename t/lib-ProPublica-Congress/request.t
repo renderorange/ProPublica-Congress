@@ -45,9 +45,19 @@ HAPPY_PATH: {
 EXCEPTIONS: {
     note( 'exceptions' );
 
-    $fail_http = 1;
-
     my $congress_obj = ProPublica::Congress->new( key => 'unitTESTkey' );
+
+    dies_ok { $congress_obj->request() }
+              "dies if uri is missing";
+    like $@, qr/The uri argument is required/,
+         'exception includes the uri urgument is required';
+
+    dies_ok { $congress_obj->request( uri => '' ) }
+              "dies if uri is empty string";
+    like $@, qr/The uri argument is required/,
+         'exception includes the uri urgument is required';
+
+    $fail_http = 1;
 
     dies_ok { $congress_obj->request( uri => 'https://fake.url.tld' ) }
               "dies if http request wasn't successful";
