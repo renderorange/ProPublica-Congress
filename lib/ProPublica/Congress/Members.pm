@@ -96,6 +96,8 @@ This module is used to request congress member information from ProPublica's Con
 
 =head2 get_members
 
+Retrieve objects for all members of congress the specified congress and chamber.
+
 Verifies arguments and creates the uri to pass to L<ProPublica::Congress>'s C<request> method.
 
 =head3 ARGUMENTS
