@@ -29,6 +29,10 @@ sub request {
         @_,
     };
 
+    if ( !defined $args->{uri} || $args->{uri} eq q{} ) {
+        die 'The uri argument is required';
+    }
+
     my $http     = HTTP::Tiny->new();
     my $response = $http->request( 'GET', $args->{uri}, { headers => { 'X-API-Key' => $self->{key} } }, );
 
