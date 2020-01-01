@@ -72,6 +72,14 @@ sub get_member_by_id {
     return $self->request( uri => $uri );
 }
 
+sub get_new_members {
+    my $self = shift;
+
+    my $uri = 'https://api.propublica.org/congress/v1/members/new.json';
+
+    return $self->request( uri => $uri );
+}
+
 1;
 
 __END__
@@ -133,6 +141,16 @@ Verifies arguments and creates the uri to pass to L<ProPublica::Congress>'s C<re
 =item member_id
 
 =back
+
+=head3 RETURNS
+
+Hashref of decoded JSON from the request to the ProPublica API.
+
+=head2 get_new_members
+
+Retrieve information about new members.
+
+Creates the uri to pass to L<ProPublica::Congress>'s C<request> method.
 
 =head3 RETURNS
 
