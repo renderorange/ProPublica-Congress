@@ -67,7 +67,7 @@ sub get_member_by_id {
         die 'The member_id argument must be a string of alpha numberic characters';
     }
 
-    my $uri = 'https://api.propublica.org/congress/v1/members/' . $args->{member_id}  . '.json';
+    my $uri = 'https://api.propublica.org/congress/v1/members/' . $args->{member_id} . '.json';
 
     return $self->request( uri => $uri );
 }
