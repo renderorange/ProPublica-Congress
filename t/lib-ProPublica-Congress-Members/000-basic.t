@@ -12,6 +12,7 @@ use_ok( $class );
 my @required_modules = qw{
     ProPublica::Congress
     constant
+    List::MoreUtils
 };
 
 foreach ( @required_modules ) {
