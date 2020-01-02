@@ -83,7 +83,7 @@ sub get_member_by_id {
     }
 
     if ( $args->{member_id} !~ m/^[A-Z0-9]+$/ ) {
-        die 'The member_id argument must be a string of alpha numberic characters';
+        die 'The member_id argument must be a string of alpha numeric characters';
     }
 
     my $uri = 'https://api.propublica.org/congress/v1/members/' . $args->{member_id} . '.json';
@@ -212,7 +212,7 @@ sub get_member_votes {
     }
 
     if ( $args->{member_id} !~ m/^[A-Z0-9]+$/ ) {
-        die 'The member_id argument must be a string of alpha numberic characters';
+        die 'The member_id argument must be a string of alpha numeric characters';
     }
 
     my $uri = 'https://api.propublica.org/congress/v1/members/' . $args->{member_id} . '/votes.json';
@@ -238,7 +238,7 @@ sub compare_member_vote_positions {
 
     foreach my $key (qw{ member_id_1 member_id_2 }) {
         if ( $args->{$key} !~ m/^[A-Z0-9]+$/ ) {
-            die "The $key argument must be a string of alpha numberic characters";
+            die "The $key argument must be a string of alpha numeric characters";
         }
     }
 

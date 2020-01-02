@@ -48,8 +48,8 @@ EXCEPTIONS: {
               'dies if member_id argument is empty string';
     dies_ok { $members_obj->get_member_votes( member_id => '_ABC123' ) }
               'dies if member_id argument contains non alpha numeric chars';
-    like $@, qr/The member_id argument must be a string of alpha numberic characters/,
-         'exception indicates member_id must be a string of alpha numberic characters';
+    like $@, qr/The member_id argument must be a string of alpha numeric characters/,
+         'exception indicates member_id must be a string of alpha numeric characters';
 }
 
 done_testing();

@@ -68,8 +68,8 @@ EXCEPTIONS: {
         dies_ok { $members_obj->compare_member_vote_positions(
             %args
         ) } "dies if $arg argument contains non alpha numeric chars";
-        like $@, qr/The $arg argument must be a string of alpha numberic characters/,
-             "exception indicates $arg must be a string of alpha numberic characters";
+        like $@, qr/The $arg argument must be a string of alpha numeric characters/,
+             "exception indicates $arg must be a string of alpha numeric characters";
     }
 
     note( 'congress values' );
