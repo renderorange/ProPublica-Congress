@@ -220,6 +220,52 @@ sub get_member_votes {
     return $self->request( uri => $uri );
 }
 
+sub compare_member_vote_positions {
+    my $self = shift;
+    my $args = {
+        member_id_1 => undef,
+        member_id_2 => undef,
+        congress => undef,
+        chamber  => undef,
+        @_,
+    };
+
+    foreach my $key ( keys %{$args} ) {
+        if ( !defined $args->{$key} || $args->{$key} eq q{} ) {
+            die "The $key argument is required";
+        }
+    }
+
+    foreach my $key (qw{ member_id_1 member_id_2 }) {
+        if ( $args->{$key} !~ m/^[A-Z0-9]+$/ ) {
+            die "The $key argument must be a string of alpha numberic characters";
+        }
+    }
+
+    $args->{chamber} = lc $args->{chamber};
+
+    unless ( $args->{chamber} eq 'house' || $args->{chamber} eq 'senate' ) {
+        die 'The chamber argument must be either house or senate';
+    }
+
+    if ( $args->{congress} !~ m/^\d+$/ || $args->{congress} < 1 ) {
+        die 'The congress argument must be a positive integer';
+    }
+
+    my $uri =
+        'https://api.propublica.org/congress/v1/members/'
+        . $args->{member_id_1}
+        . '/votes/'
+        . $args->{member_id_2}
+        . q{/}
+        . $args->{congress}
+        . q{/}
+        . $args->{chamber}
+        . '.json';
+
+    return $self->request( uri => $uri );
+}
+
 1;
 
 __END__
@@ -365,6 +411,32 @@ Verifies arguments and creates the uri to pass to L<ProPublica::Congress>'s C<re
 =over
 
 =item member_id
+
+=back
+
+=head3 RETURNS
+
+Hashref of decoded JSON from the request to the ProPublica API.
+
+=head2 compare_member_vote_positions
+
+Retrieve member vote comparison information between 2 members.  Member ids can be retrieved from C<get_members> or from L<http://bioguide.congress.gov/biosearch/biosearch.asp>.
+
+Verifies arguments and creates the uri to pass to L<ProPublica::Congress>'s C<request> method.
+
+=head3 ARGUMENTS
+
+=over
+
+=item member_id_1
+
+=item member_id_2
+
+=item congress
+
+=item chamber
+
+Must be either house or senate.
 
 =back
 
