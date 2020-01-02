@@ -200,6 +200,26 @@ sub get_members_leaving_office {
     return $self->request( uri => $uri );
 }
 
+sub get_member_votes {
+    my $self = shift;
+    my $args = {
+        member_id => undef,
+        @_,
+    };
+
+    if ( !defined $args->{member_id} || $args->{member_id} eq q{} ) {
+        die 'The member_id argument is required';
+    }
+
+    if ( $args->{member_id} !~ m/^[A-Z0-9]+$/ ) {
+        die 'The member_id argument must be a string of alpha numberic characters';
+    }
+
+    my $uri = 'https://api.propublica.org/congress/v1/members/' . $args->{member_id} . '/votes.json';
+
+    return $self->request( uri => $uri );
+}
+
 1;
 
 __END__
@@ -327,6 +347,24 @@ If chamber is senate, chamber must be >= 80.
 =item chamber
 
 Must be either house or senate.
+
+=back
+
+=head3 RETURNS
+
+Hashref of decoded JSON from the request to the ProPublica API.
+
+=head2 get_member_votes
+
+Retrieve specific member votes information.  Member ids can be retrieved from C<get_members> or from L<http://bioguide.congress.gov/biosearch/biosearch.asp>.
+
+Verifies arguments and creates the uri to pass to L<ProPublica::Congress>'s C<request> method.
+
+=head3 ARGUMENTS
+
+=over
+
+=item member_id
 
 =back
 
