@@ -225,8 +225,8 @@ sub compare_member_vote_positions {
     my $args = {
         member_id_1 => undef,
         member_id_2 => undef,
-        congress => undef,
-        chamber  => undef,
+        congress    => undef,
+        chamber     => undef,
         @_,
     };
 
@@ -253,15 +253,12 @@ sub compare_member_vote_positions {
     }
 
     my $uri =
-        'https://api.propublica.org/congress/v1/members/'
+          'https://api.propublica.org/congress/v1/members/'
         . $args->{member_id_1}
         . '/votes/'
-        . $args->{member_id_2}
-        . q{/}
-        . $args->{congress}
-        . q{/}
-        . $args->{chamber}
-        . '.json';
+        . $args->{member_id_2} . q{/}
+        . $args->{congress} . q{/}
+        . $args->{chamber} . '.json';
 
     return $self->request( uri => $uri );
 }
