@@ -3,6 +3,7 @@ package ProPublica::Congress;
 use strict;
 use warnings;
 
+use Try::Tiny;
 use HTTP::Tiny;
 use JSON::Tiny;
 
@@ -40,7 +41,16 @@ sub request {
         die 'Request was not successful: ' . $response->{reason};
     }
 
-    return JSON::Tiny::decode_json( $response->{content} );
+    my $content = try {
+        return JSON::Tiny::decode_json( $response->{content} );
+    }
+    catch {
+        my $exception = $_;
+
+        die "Decode JSON from request was not successful: $exception";
+    };
+
+    return $content;
 }
 
 1;
@@ -104,6 +114,8 @@ Hashref of decoded JSON from the request to the ProPublica API.
 =head1 DEPENDENCIES
 
 =over
+
+=item Try::Tiny
 
 =item HTTP::Tiny
 
