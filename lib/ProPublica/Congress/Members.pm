@@ -156,6 +156,50 @@ sub get_current_members_by_state_and_district {
     return $self->request( uri => $uri );
 }
 
+sub get_members_leaving_office {
+    my $self = shift;
+    my $args = {
+        congress => undef,
+        chamber  => undef,
+        @_,
+    };
+
+    foreach my $key ( keys %{$args} ) {
+        if ( !defined $args->{$key} || $args->{$key} eq q{} ) {
+            die "The $key argument is required";
+        }
+    }
+
+    $args->{chamber} = lc $args->{chamber};
+
+    unless ( $args->{chamber} eq 'house' || $args->{chamber} eq 'senate' ) {
+        die 'The chamber argument must be either house or senate';
+    }
+
+    if ( $args->{congress} !~ m/^\d+$/ || $args->{congress} < 1 ) {
+        die 'The congress argument must be a positive integer';
+    }
+
+    if ( $args->{chamber} eq 'house' ) {
+        if ( $args->{congress} < HOUSE_MINIMUM ) {
+            die 'The congress argument must be >= ' . HOUSE_MINIMUM . ' for the house';
+        }
+    }
+    else {
+        if ( $args->{congress} < SENATE_MINIMUM ) {
+            die 'The congress argument must be >= ' . SENATE_MINIMUM . ' for the senate';
+        }
+    }
+
+    my $uri =
+          'https://api.propublica.org/congress/v1/'
+        . $args->{congress} . q{/}
+        . $args->{chamber}
+        . '/members/leaving.json';
+
+    return $self->request( uri => $uri );
+}
+
 1;
 
 __END__
@@ -257,6 +301,32 @@ Federal districts, territories, and commonwealths do not have senate members, bu
 States with at-large districts (AK, DE, MT, ND, SD, VT, WY), territories (GU, AS, VI, MP), commonwealths (PR), and the District of Columbia don't have district numbers for the house.  For those cases, district must be set to 1.
 
 If chamber is senate, the district argument will be ignored.
+
+=back
+
+=head3 RETURNS
+
+Hashref of decoded JSON from the request to the ProPublica API.
+
+=head2 get_members_leaving_office
+
+Retrieve information for members leaving congress.
+
+Verifies arguments and creates the uri to pass to L<ProPublica::Congress>'s C<request> method.
+
+=head3 ARGUMENTS
+
+=over
+
+=item congress
+
+If chamber is house, congress must be >= 102.
+
+If chamber is senate, chamber must be >= 80.
+
+=item chamber
+
+Must be either house or senate.
 
 =back
 
