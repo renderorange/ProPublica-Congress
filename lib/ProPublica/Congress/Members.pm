@@ -337,6 +337,8 @@ Retrieve objects for all members of congress the specified congress and chamber.
 
 Verifies arguments and creates the uri to pass to L<ProPublica::Congress>'s C<request> method.
 
+L<https://projects.propublica.org/api-docs/congress-api/members/#lists-of-members>
+
 =head3 ARGUMENTS
 
 =over
@@ -361,6 +363,8 @@ Retrieve specific member information.  Member ids can be retrieved from C<get_me
 
 Verifies arguments and creates the uri to pass to L<ProPublica::Congress>'s C<request> method.
 
+L<https://projects.propublica.org/api-docs/congress-api/members/#get-a-specific-member>
+
 =head3 ARGUMENTS
 
 =over
@@ -379,6 +383,8 @@ Retrieve information about new members.
 
 Creates the uri to pass to L<ProPublica::Congress>'s C<request> method.
 
+L<https://projects.propublica.org/api-docs/congress-api/members/#get-new-members>
+
 =head3 RETURNS
 
 Hashref of decoded JSON from the request to the ProPublica API.
@@ -388,6 +394,8 @@ Hashref of decoded JSON from the request to the ProPublica API.
 Retrieve objects for members by state and district.  Accepted state and district abbreviation is defined in this module as constants at the top.
 
 Creates the uri to pass to L<ProPublica::Congress>'s C<request> method.
+
+L<https://projects.propublica.org/api-docs/congress-api/members/#get-current-members-by-statedistrict>
 
 =head3 ARGUMENTS
 
@@ -421,6 +429,8 @@ Retrieve information for members leaving congress.
 
 Verifies arguments and creates the uri to pass to L<ProPublica::Congress>'s C<request> method.
 
+L<https://projects.propublica.org/api-docs/congress-api/members/#get-members-leaving-office>
+
 =head3 ARGUMENTS
 
 =over
@@ -445,6 +455,8 @@ Retrieve specific member votes information.  Member ids can be retrieved from C<
 
 Verifies arguments and creates the uri to pass to L<ProPublica::Congress>'s C<request> method.
 
+L<https://projects.propublica.org/api-docs/congress-api/members/#get-a-specific-members-vote-positions>
+
 =head3 ARGUMENTS
 
 =over
@@ -462,6 +474,8 @@ Hashref of decoded JSON from the request to the ProPublica API.
 Retrieve member vote comparison information between 2 members.  Member ids can be retrieved from C<get_members> or from L<http://bioguide.congress.gov/biosearch/biosearch.asp>.
 
 Verifies arguments and creates the uri to pass to L<ProPublica::Congress>'s C<request> method.
+
+L<https://projects.propublica.org/api-docs/congress-api/members/#compare-two-members-vote-positions>
 
 =head3 ARGUMENTS
 
@@ -491,6 +505,8 @@ Retrieve member bill sponsorship comparison information between 2 members.  Memb
 
 Verifies arguments and creates the uri to pass to L<ProPublica::Congress>'s C<request> method.
 
+L<https://projects.propublica.org/api-docs/congress-api/members/#compare-two-members-bill-sponsorships>
+
 =head3 ARGUMENTS
 
 =over
@@ -518,6 +534,8 @@ Hashref of decoded JSON from the request to the ProPublica API.
 Retrieve the 20 most recent bill cosponsorships for a particular member, either bills cosponsored or bills where cosponsorship was withdrawn.  Member ids can be retrieved from C<get_members> or from L<http://bioguide.congress.gov/biosearch/biosearch.asp>.
 
 Verifies arguments and creates the uri to pass to L<ProPublica::Congress>'s C<request> method.
+
+L<https://projects.propublica.org/api-docs/congress-api/members/#get-bills-cosponsored-by-a-specific-member>
 
 =head3 ARGUMENTS
 
