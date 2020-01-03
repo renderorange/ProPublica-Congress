@@ -50,6 +50,12 @@ sub request {
         die "Decode JSON from request was not successful: $exception";
     };
 
+    # the ProPublica API returns 200 OK for errors, so additionally return the error if
+    # the status value is not OK.
+    if ( $content->{status} ne 'OK' ) {
+        die 'Request was not successful: ' . $content->{errors}->[0]->{error};
+    }
+
     return $content;
 }
 
