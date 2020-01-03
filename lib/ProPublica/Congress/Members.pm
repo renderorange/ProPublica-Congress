@@ -306,6 +306,39 @@ sub compare_member_bill_sponsorships {
     return $self->request( uri => $uri );
 }
 
+sub get_member_cosponsored_bills {
+    my $self = shift;
+    my $args = {
+        member_id => undef,
+        type      => undef,
+        @_,
+    };
+
+    foreach my $key ( keys %{$args} ) {
+        if ( !defined $args->{$key} || $args->{$key} eq q{} ) {
+            die "The $key argument is required";
+        }
+    }
+
+    if ( $args->{member_id} !~ m/^[A-Z0-9]+$/ ) {
+        die "The member_id argument must be a string of alpha numeric characters";
+    }
+
+    $args->{type} = lc $args->{type};
+
+    unless ( $args->{type} eq 'cosponsored' || $args->{type} eq 'withdrawn' ) {
+        die 'The type argument must be either cosponsored or withdrawn';
+    }
+
+    my $uri =
+          'https://api.propublica.org/congress/v1/members/'
+        . $args->{member_id}
+        . '/bills/'
+        . $args->{type} . '.json';
+
+    return $self->request( uri => $uri );
+}
+
 1;
 
 __END__
@@ -503,6 +536,28 @@ Verifies arguments and creates the uri to pass to L<ProPublica::Congress>'s C<re
 =item chamber
 
 Must be either house or senate.
+
+=back
+
+=head3 RETURNS
+
+Hashref of decoded JSON from the request to the ProPublica API.
+
+=head2 get_member_cosponsored_bills
+
+Retrieve the 20 most recent bill cosponsorships for a particular member, either bills cosponsored or bills where cosponsorship was withdrawn.  Member ids can be retrieved from C<get_members> or from L<http://bioguide.congress.gov/biosearch/biosearch.asp>.
+
+Verifies arguments and creates the uri to pass to L<ProPublica::Congress>'s C<request> method.
+
+=head3 ARGUMENTS
+
+=over
+
+=item member_id
+
+=item type
+
+Must be either cosponsored or withdrawn.
 
 =back
 
