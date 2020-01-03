@@ -23,6 +23,13 @@ HAPPY_PATH: {
     my @methods = qw(
         request
         get_members
+        get_member_by_id
+        get_new_members
+        get_current_members_by_state_and_district
+        get_members_leaving_office
+        get_member_votes
+        compare_member_vote_positions 
+        compare_member_bill_sponsorships
     );
 
     can_ok( $class, $_ ) foreach @methods;
