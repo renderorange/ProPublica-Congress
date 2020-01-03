@@ -26,14 +26,11 @@ no warnings 'redefine';
     return $response;
 };
 
-my $house_min  = ProPublica::Congress::Members::HOUSE_MINIMUM();
-my $senate_min = ProPublica::Congress::Members::SENATE_MINIMUM();
-
 HAPPY_PATH: {
     note( 'happy path' );
 
     my $members_obj = ProPublica::Congress::Members->new( key => 'unitTESTkey' );
-    my $members = $members_obj->get_members_leaving_office( chamber => 'house', congress => $house_min );
+    my $members = $members_obj->get_members_leaving_office( chamber => 'house', congress => 1 );
 
     is_deeply( $members, { json => 'data' }, 'returned contains expected data' );
 }
@@ -50,20 +47,12 @@ EXCEPTIONS: {
         like $@, qr/The chamber argument must be either house or senate/,
              'exception indicates chamber argument must be house or senate';
     }
-    dies_ok { $members_obj->get_members_leaving_office( congress => $house_min ) }
+    dies_ok { $members_obj->get_members_leaving_office( congress => 1 ) }
               'dies if chamber argument is missing';
     like $@, qr/The chamber argument is required/,
          'exception indicates chamber argument is required';
-    dies_ok { $members_obj->get_members_leaving_office( chamber => '', congress => $house_min ) }
+    dies_ok { $members_obj->get_members_leaving_office( chamber => '', congress => 1 ) }
               'dies if chamber argument is empty string';
-
-    note( 'house chamber and corresponding congress values' );
-    dies_ok { $members_obj->get_members_leaving_office( chamber => 'house', congress => $house_min - 1 ) }
-              "dies if chamber is house and congress is < $house_min";
-
-    note( 'senate chamber and corresponding congress values' );
-    dies_ok { $members_obj->get_members_leaving_office( chamber => 'senate', congress => $senate_min - 1 ) }
-              "dies if chamber is senate and congress is < $senate_min";
 
     note( 'congress values' );
     foreach my $value ( qw{ a 0 -1 } ) {

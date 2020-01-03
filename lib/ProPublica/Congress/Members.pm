@@ -9,11 +9,6 @@ use List::MoreUtils ();
 
 our $VERSION = '0.01';
 
-use constant {
-    HOUSE_MINIMUM  => 102,
-    SENATE_MINIMUM => 80,
-};
-
 use constant STATES => qw{
     AL AK AZ AR CA CO CT DE FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE
     NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY
@@ -53,17 +48,6 @@ sub get_members {
 
     if ( $args->{congress} !~ m/^\d+$/ || $args->{congress} < 1 ) {
         die 'The congress argument must be a positive integer';
-    }
-
-    if ( $args->{chamber} eq 'house' ) {
-        if ( $args->{congress} < HOUSE_MINIMUM ) {
-            die 'The congress argument must be >= ' . HOUSE_MINIMUM . ' for the house';
-        }
-    }
-    else {
-        if ( $args->{congress} < SENATE_MINIMUM ) {
-            die 'The congress argument must be >= ' . SENATE_MINIMUM . ' for the senate';
-        }
     }
 
     my $uri = 'https://api.propublica.org/congress/v1/' . $args->{congress} . q{/} . $args->{chamber} . '/members.json';
@@ -178,17 +162,6 @@ sub get_members_leaving_office {
 
     if ( $args->{congress} !~ m/^\d+$/ || $args->{congress} < 1 ) {
         die 'The congress argument must be a positive integer';
-    }
-
-    if ( $args->{chamber} eq 'house' ) {
-        if ( $args->{congress} < HOUSE_MINIMUM ) {
-            die 'The congress argument must be >= ' . HOUSE_MINIMUM . ' for the house';
-        }
-    }
-    else {
-        if ( $args->{congress} < SENATE_MINIMUM ) {
-            die 'The congress argument must be >= ' . SENATE_MINIMUM . ' for the senate';
-        }
     }
 
     my $uri =
@@ -331,10 +304,7 @@ sub get_member_cosponsored_bills {
     }
 
     my $uri =
-          'https://api.propublica.org/congress/v1/members/'
-        . $args->{member_id}
-        . '/bills/'
-        . $args->{type} . '.json';
+        'https://api.propublica.org/congress/v1/members/' . $args->{member_id} . '/bills/' . $args->{type} . '.json';
 
     return $self->request( uri => $uri );
 }
@@ -373,9 +343,7 @@ Verifies arguments and creates the uri to pass to L<ProPublica::Congress>'s C<re
 
 =item congress
 
-If chamber is house, congress must be >= 102.
-
-If chamber is senate, chamber must be >= 80.
+Must be a positive integer.
 
 =item chamber
 
@@ -459,9 +427,7 @@ Verifies arguments and creates the uri to pass to L<ProPublica::Congress>'s C<re
 
 =item congress
 
-If chamber is house, congress must be >= 102.
-
-If chamber is senate, chamber must be >= 80.
+Must be a positive integer.
 
 =item chamber
 
@@ -507,6 +473,8 @@ Verifies arguments and creates the uri to pass to L<ProPublica::Congress>'s C<re
 
 =item congress
 
+Must be a positive integer.
+
 =item chamber
 
 Must be either house or senate.
@@ -532,6 +500,8 @@ Verifies arguments and creates the uri to pass to L<ProPublica::Congress>'s C<re
 =item member_id_2
 
 =item congress
+
+Must be a positive integer.
 
 =item chamber
 
