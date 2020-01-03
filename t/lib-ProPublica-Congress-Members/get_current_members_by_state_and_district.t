@@ -51,15 +51,13 @@ EXCEPTIONS: {
     my $members_obj = ProPublica::Congress::Members->new( key => 'unitTESTkey' );
 
     note( 'chamber values' );
-    foreach my $value ( qw{ a 0 -1 } ) {
-        dies_ok { $members_obj->get_current_members_by_state_and_district(
-            chamber  => $value,
-            state    => 'TX',
-            district => 7,
-        ) } "dies if chamber argument is $value";
-        like $@, qr/The chamber argument must be either house or senate/,
-             'exception indicates chamber argument must be house or senate';
-    }
+    dies_ok { $members_obj->get_current_members_by_state_and_district(
+        chamber  => 'a',
+        state    => 'TX',
+        district => 7,
+    ) } "dies if chamber argument is a";
+    like $@, qr/The chamber argument must be either house or senate/,
+         'exception indicates chamber argument must be house or senate';
     dies_ok { $members_obj->get_current_members_by_state_and_district(
         state    => 'TX',
         district => 7,

@@ -85,16 +85,14 @@ EXCEPTIONS: {
     }
 
     note( 'chamber values' );
-    foreach my $value ( qw{ a 0 -1 } ) {
-        dies_ok { $members_obj->compare_member_vote_positions(
-            member_id_1 => 'ABC123',
-            member_id_2 => 'ABC124',
-            congress => 102,
-            chamber  => $value,
-        ) } "dies if chamber argument is $value";
-        like $@, qr/The chamber argument must be either house or senate/,
-             'exception indicates chamber argument must be house or senate';
-    }
+    dies_ok { $members_obj->compare_member_vote_positions(
+        member_id_1 => 'ABC123',
+        member_id_2 => 'ABC124',
+        congress => 102,
+        chamber  => 'a',
+    ) } "dies if chamber argument is a";
+    like $@, qr/The chamber argument must be either house or senate/,
+        'exception indicates chamber argument must be house or senate';
     dies_ok { $members_obj->compare_member_vote_positions(
         member_id_1 => 'ABC123',
         member_id_2 => 'ABC124',
