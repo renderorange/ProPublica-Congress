@@ -19,5 +19,5 @@ if ( $EVAL_ERROR ) {
 
 Test::PerlTidy::run_tests(
     path       => "$FindBin::Bin/../lib",
-    perltidyrc => "$FindBin::Bin/perltidyrc",
+    perltidyrc => "$FindBin::Bin/config/perltidyrc",
 );
