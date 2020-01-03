@@ -16,14 +16,30 @@ no warnings 'redefine';
 
 my $fail_http = 0;
 
+my $fail_propublica = 0;
+my $fail_propublica_content = {
+    status => 'ERROR',
+    errors => [
+        { error => "not enough olives on ProPublica's pizza." },
+    ],
+};
+my $success_propublica_content = {
+    status  => 'OK',
+    results => [
+        { json => 'data' },
+    ],
+};
+
 *HTTP::Tiny::request = sub {
     my $self = shift;
     my ( $method, $uri, $headers ) = @_;
 
+    my $content;
+
     my $response = {
         success => ( $fail_http ? 0 : 1 ),
         reason  => 'not enough olives on the pizza.',
-        content => { json => 'data' },
+        content => ( $fail_propublica ? $fail_propublica_content : $success_propublica_content ),
     };
 
     return $response;
@@ -47,7 +63,7 @@ HAPPY_PATH: {
     my $congress_obj = ProPublica::Congress->new( key => 'unitTESTkey' );
     my $data = $congress_obj->request( uri => 'https://fake.url.tld' );
 
-    is_deeply( $data, { json => 'data' }, 'returned contains expected data' );
+    is_deeply( $data, $success_propublica_content, 'returned contains expected data' );
 }
 
 EXCEPTIONS: {
@@ -79,6 +95,14 @@ EXCEPTIONS: {
               "dies if json decode wasn't successful";
     like $@, qr/Decode JSON from request was not successful: not enough olives on the pizza/,
          'exception includes the reason from the JSON decode';
+
+    $fail_json = 0;
+    $fail_propublica = 1;
+
+    dies_ok { $congress_obj->request( uri => 'https://fake.url.tld' ) }
+              "dies if return from ProPublica indicates ERROR";
+    like $@, qr/Request was not successful: not enough olives on ProPublica's pizza\./,
+         'exception includes the reason from the http request';
 }
 
 done_testing();
