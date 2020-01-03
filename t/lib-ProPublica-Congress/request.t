@@ -29,8 +29,16 @@ my $fail_http = 0;
     return $response;
 };
 
+my $fail_json = 0;
+
 *JSON::Tiny::decode_json = sub {
-    return shift;
+    my $data = shift;
+
+    if ( $fail_json ) {
+        die 'not enough olives on the pizza.';
+    }
+
+    return $data;
 };
 
 HAPPY_PATH: {
@@ -61,8 +69,16 @@ EXCEPTIONS: {
 
     dies_ok { $congress_obj->request( uri => 'https://fake.url.tld' ) }
               "dies if http request wasn't successful";
-    like $@, qr/not enough olives on the pizza/,
+    like $@, qr/Request was not successful: not enough olives on the pizza/,
          'exception includes the reason from the http request';
+
+    $fail_http = 0;
+    $fail_json = 1;
+
+    dies_ok { $congress_obj->request( uri => 'https://fake.url.tld' ) }
+              "dies if json decode wasn't successful";
+    like $@, qr/Decode JSON from request was not successful: not enough olives on the pizza/,
+         'exception includes the reason from the JSON decode';
 }
 
 done_testing();
