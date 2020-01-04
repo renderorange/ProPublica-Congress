@@ -83,6 +83,22 @@ EXCEPTIONS: {
         like $@, qr/The congress argument must be a positive integer/,
              'exception indicates congress argument must be positive int';
     }
+    dies_ok { $members_obj->compare_member_vote_positions(
+        member_id_1 => 'ABC123',
+        member_id_2 => 'ABC124',
+        congress => 101,
+        chamber  => 'house',
+    ) } "dies if congress argument is < 102 for the house";
+    like $@, qr/The congress argument must be >= 102 for the house/,
+         'exception indicates congress argument must be >= 102 for the house';
+    dies_ok { $members_obj->compare_member_vote_positions(
+        member_id_1 => 'ABC123',
+        member_id_2 => 'ABC124',
+        congress => 100,
+        chamber  => 'senate',
+    ) } "dies if congress argument is < 101 for the senate";
+    like $@, qr/The congress argument must be >= 101 for the senate/,
+         'exception indicates congress argument must be >= 101 for the senate';
 
     note( 'chamber values' );
     dies_ok { $members_obj->compare_member_vote_positions(

@@ -50,6 +50,17 @@ sub get_members {
         die 'The congress argument must be a positive integer';
     }
 
+    if ( $args->{chamber} eq 'house' ) {
+        if ( $args->{congress} < 102 ) {
+            die 'The congress argument must be >= 102 for the house';
+        }
+    }
+    else {
+        if ( $args->{congress} < 80 ) {
+            die 'The congress argument must be >= 80 for the senate';
+        }
+    }
+
     my $uri = 'https://api.propublica.org/congress/v1/' . $args->{congress} . q{/} . $args->{chamber} . '/members.json';
 
     return $self->request( uri => $uri );
@@ -164,6 +175,10 @@ sub get_members_leaving_office {
         die 'The congress argument must be a positive integer';
     }
 
+    if ( $args->{congress} < 111 ) {
+        die 'The congress argument must be >= 111';
+    }
+
     my $uri =
           'https://api.propublica.org/congress/v1/'
         . $args->{congress} . q{/}
@@ -225,6 +240,17 @@ sub compare_member_vote_positions {
         die 'The congress argument must be a positive integer';
     }
 
+    if ( $args->{chamber} eq 'house' ) {
+        if ( $args->{congress} < 102 ) {
+            die 'The congress argument must be >= 102 for the house';
+        }
+    }
+    else {
+        if ( $args->{congress} < 101 ) {
+            die 'The congress argument must be >= 101 for the senate';
+        }
+    }
+
     my $uri =
           'https://api.propublica.org/congress/v1/members/'
         . $args->{member_id_1}
@@ -266,6 +292,17 @@ sub compare_member_bill_sponsorships {
 
     if ( $args->{congress} !~ m/^\d+$/ || $args->{congress} < 1 ) {
         die 'The congress argument must be a positive integer';
+    }
+
+    if ( $args->{chamber} eq 'house' ) {
+        if ( $args->{congress} < 102 ) {
+            die 'The congress argument must be >= 102 for the house';
+        }
+    }
+    else {
+        if ( $args->{congress} < 101 ) {
+            die 'The congress argument must be >= 101 for the senate';
+        }
     }
 
     my $uri =
@@ -382,7 +419,9 @@ L<https://projects.propublica.org/api-docs/congress-api/members/#lists-of-member
 
 =item congress
 
-Must be a positive integer.
+If chamber is house, congress must be >= 102.
+
+If chamber is senate, chamber must be >= 80.
 
 =item chamber
 
@@ -474,7 +513,7 @@ L<https://projects.propublica.org/api-docs/congress-api/members/#get-members-lea
 
 =item congress
 
-Must be a positive integer.
+Must be >= 111;
 
 =item chamber
 
@@ -524,7 +563,9 @@ L<https://projects.propublica.org/api-docs/congress-api/members/#compare-two-mem
 
 =item congress
 
-Must be a positive integer.
+If chamber is house, congress must be >= 102.
+
+If chamber is senate, chamber must be >= 101.
 
 =item chamber
 
@@ -554,7 +595,9 @@ L<https://projects.propublica.org/api-docs/congress-api/members/#compare-two-mem
 
 =item congress
 
-Must be a positive integer.
+If chamber is house, congress must be >= 102.
+
+If chamber is senate, chamber must be >= 101.
 
 =item chamber
 

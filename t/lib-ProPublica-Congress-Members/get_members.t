@@ -30,7 +30,7 @@ HAPPY_PATH: {
     note( 'happy path' );
 
     my $members_obj = ProPublica::Congress::Members->new( key => 'unitTESTkey' );
-    my $members = $members_obj->get_members( chamber => 'house', congress => 1 );
+    my $members = $members_obj->get_members( chamber => 'house', congress => 102 );
 
     is_deeply( $members, { json => 'data' }, 'returned contains expected data' );
 }
@@ -41,7 +41,7 @@ EXCEPTIONS: {
     my $members_obj = ProPublica::Congress::Members->new( key => 'unitTESTkey' );
 
     note( 'chamber values' );
-    dies_ok { $members_obj->get_members( chamber => 'a', congress => 1 ) }
+    dies_ok { $members_obj->get_members( chamber => 'a', congress => 102 ) }
               "dies if chamber argument is a";
     like $@, qr/The chamber argument must be either house or senate/,
          'exception indicates chamber argument must be house or senate';
@@ -59,6 +59,14 @@ EXCEPTIONS: {
         like $@, qr/The congress argument must be a positive integer/,
              'exception indicates congress argument must be positive int';
     }
+    dies_ok { $members_obj->get_members( chamber => 'house', congress => 101 ) }
+              "dies if congress argument is < 102 for the house";
+    like $@, qr/The congress argument must be >= 102 for the house/,
+         'exception indicates congress argument must be >= 102 for the house';
+    dies_ok { $members_obj->get_members( chamber => 'senate', congress => 79 ) }
+              "dies if congress argument is < 80 for the senate";
+    like $@, qr/The congress argument must be >= 80 for the senate/,
+         'exception indicates congress argument must be >= 80 for the senate';
 }
 
 done_testing();
