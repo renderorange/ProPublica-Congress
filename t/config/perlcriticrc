@@ -92,8 +92,7 @@ forbid = last left right no abstract contract record second close
 [-ControlStructures::ProhibitUnlessBlocks]
 
 # don't require constants inplace of magic variables
-# I'm still on the fence about this
-# [-ValuesAndExpressions::ProhibitMagicNumbers]
+[-ValuesAndExpressions::ProhibitMagicNumbers]
 
 # don't prohibit constant pragma
 [-ValuesAndExpressions::ProhibitConstantPragma]
