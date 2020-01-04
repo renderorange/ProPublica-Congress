@@ -309,6 +309,43 @@ sub get_member_cosponsored_bills {
     return $self->request( uri => $uri );
 }
 
+sub get_member_office_expenses {
+    my $self = shift;
+    my $args = {
+        member_id => undef,
+        year      => undef,
+        quarter   => undef,
+        @_,
+    };
+
+    foreach my $key ( keys %{$args} ) {
+        if ( !defined $args->{$key} || $args->{$key} eq q{} ) {
+            die "The $key argument is required";
+        }
+    }
+
+    if ( $args->{member_id} !~ m/^[A-Z0-9]+$/ ) {
+        die "The member_id argument must be a string of alpha numeric characters";
+    }
+
+    if ( $args->{year} !~ m/^\d+$/ || $args->{year} < 2009 ) {
+        die 'The year argument must be a >= 2009';
+    }
+
+    if ( $args->{quarter} !~ m/^[1-4]$/ ) {
+        die 'The quarter argument must be 1-4';
+    }
+
+    my $uri =
+          'https://api.propublica.org/congress/v1/members/'
+        . $args->{member_id}
+        . '/office_expenses/'
+        . $args->{year} . q{/}
+        . $args->{quarter} . '.json';
+
+    return $self->request( uri => $uri );
+}
+
 1;
 
 __END__
@@ -546,6 +583,34 @@ L<https://projects.propublica.org/api-docs/congress-api/members/#get-bills-cospo
 =item type
 
 Must be either cosponsored or withdrawn.
+
+=back
+
+=head3 RETURNS
+
+Hashref of decoded JSON from the request to the ProPublica API.
+
+=head2 get_member_office_expenses
+
+Retrieve the amount a given lawmaker spent during a specified year and quarter.  Member ids can be retrieved from C<get_members> or from L<http://bioguide.congress.gov/biosearch/biosearch.asp>.
+
+Verifies arguments and creates the uri to pass to L<ProPublica::Congress>'s C<request> method.
+
+L<https://projects.propublica.org/api-docs/congress-api/members/#office-expenses>
+
+=head3 ARGUMENTS
+
+=over
+
+=item member_id
+
+=item year
+
+Must be >= 2009.
+
+=item quarter
+
+Must be 1-4.
 
 =back
 
