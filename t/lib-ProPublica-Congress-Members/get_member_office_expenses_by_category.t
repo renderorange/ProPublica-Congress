@@ -1,0 +1,70 @@
+use strict;
+use warnings;
+
+use Test::More;
+use Test::Exception;
+
+use FindBin;
+use lib "$FindBin::Bin/../../lib";
+
+use ProPublica::Congress;
+
+my $class = 'ProPublica::Congress::Members';
+use_ok( $class );
+
+no warnings 'redefine';
+
+*ProPublica::Congress::request = sub {
+    my $self = shift;
+    my $args = {
+        uri => undef,
+        @_,
+    };
+
+    my $response = { json => 'data' };
+
+    return $response;
+};
+
+HAPPY_PATH: {
+    note( 'happy path' );
+
+    my $members_obj = ProPublica::Congress::Members->new( key => 'unitTESTkey' );
+    my $expenses = $members_obj->get_member_office_expenses_by_category(
+        member_id => 'ABC123', category => 'total'
+    );
+
+    is_deeply( $expenses, { json => 'data' }, 'returned contains expected data' );
+}
+
+EXCEPTIONS: {
+    note( 'exceptions' );
+
+    my $members_obj = ProPublica::Congress::Members->new( key => 'unitTESTkey' );
+
+    note( 'member values' );
+    dies_ok { $members_obj->get_member_office_expenses_by_category( category => 'total' ) }
+              'dies if member_id argument is missing';
+    like $@, qr/The member_id argument is required/,
+         'exception indicates member_id argument is required';
+    dies_ok { $members_obj->get_member_office_expenses_by_category( member_id => '', category => 'total' ) }
+              'dies if member_id argument is empty string';
+    dies_ok { $members_obj->get_member_office_expenses_by_category( member_id => '_ABC123', category => 'total' ) }
+              'dies if member_id argument contains non alpha numeric chars';
+    like $@, qr/The member_id argument must be a string of alpha numeric characters/,
+         'exception indicates member_id must be a string of alpha numeric characters';
+
+    note( 'category values' );
+    dies_ok { $members_obj->get_member_office_expenses_by_category( member_id => 'ABC123' ) }
+              'dies if category argument is missing';
+    like $@, qr/The category argument is required/,
+         'exception indicates category argument is required';
+    dies_ok { $members_obj->get_member_office_expenses_by_category( member_id => 'ABC123', category => '' ) }
+              'dies if category argument is empty string';
+    dies_ok { $members_obj->get_member_office_expenses_by_category( member_id => 'ABC123', category => 'a' ) }
+              'dies if category argument is a';
+    like $@, qr/The a category argument is unknown/,
+         'exception indicates category argument is unknown';
+}
+
+done_testing();
