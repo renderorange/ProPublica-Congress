@@ -383,6 +383,44 @@ sub get_member_office_expenses {
     return $self->request( uri => $uri );
 }
 
+sub get_member_office_expenses_by_category {
+    my $self = shift;
+    my $args = {
+        member_id => undef,
+        category  => undef,
+        @_,
+    };
+
+    foreach my $key ( keys %{$args} ) {
+        if ( !defined $args->{$key} || $args->{$key} eq q{} ) {
+            die "The $key argument is required";
+        }
+    }
+
+    if ( $args->{member_id} !~ m/^[A-Z0-9]+$/ ) {
+        die "The member_id argument must be a string of alpha numeric characters";
+    }
+
+    my @valid_categories = (
+        qw{
+            travel personnel rent-utilities other-services supplies
+            franked-mail printing equipment total
+            }
+    );
+
+    unless ( List::MoreUtils::any { $args->{category} eq $_ } @valid_categories ) {
+        die 'The ' . $args->{category} . ' category argument is unknown';
+    }
+
+    my $uri =
+          'https://api.propublica.org/congress/v1/members/'
+        . $args->{member_id}
+        . '/office_expenses/category/'
+        . $args->{category} . '.json';
+
+    return $self->request( uri => $uri );
+}
+
 1;
 
 __END__
@@ -654,6 +692,52 @@ Must be >= 2009.
 =item quarter
 
 Must be 1-4.
+
+=back
+
+=head3 RETURNS
+
+Hashref of decoded JSON from the request to the ProPublica API.
+
+=head2 get_member_office_expenses_by_category
+
+Retrieve the amount a given lawmaker spent in a specified category.  Member ids can be retrieved from C<get_members> or from L<http://bioguide.congress.gov/biosearch/biosearch.asp>.
+
+Verifies arguments and creates the uri to pass to L<ProPublica::Congress>'s C<request> method.
+
+L<https://projects.propublica.org/api-docs/congress-api/members/#get-quarterly-office-expenses-by-category-for-a-specific-house-member>
+
+=head3 ARGUMENTS
+
+=over
+
+=item member_id
+
+=item category
+
+Must be one of the following:
+
+=over
+
+=item travel
+
+=item personnel
+
+=item rent-utilities
+
+=item other-services
+
+=item supplies
+
+=item franked-mail
+
+=item printing
+
+=item equipment
+
+=item total
+
+=back
 
 =back
 
