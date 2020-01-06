@@ -346,7 +346,7 @@ sub get_member_cosponsored_bills {
     return $self->request( uri => $uri );
 }
 
-sub get_member_office_expenses {
+sub get_member_quarterly_office_expenses {
     my $self = shift;
     my $args = {
         member_id => undef,
@@ -671,7 +671,7 @@ Must be either cosponsored or withdrawn.
 
 Hashref of decoded JSON from the request to the ProPublica API.
 
-=head2 get_member_office_expenses
+=head2 get_member_quarterly_office_expenses
 
 Retrieve the amount a given lawmaker spent during a specified year and quarter.  Member ids can be retrieved from C<get_members> or from L<http://bioguide.congress.gov/biosearch/biosearch.asp>.
 

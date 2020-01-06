@@ -20,7 +20,7 @@ Getopt::Long::GetOptions(
 );
 
 if ( $opts{help} || !$opts{member_id} || !$opts{year} || !$opts{quarter} ) {
-    print "Usage: get_member_office_expenses.pl --member_id K000388 --year 2019 --quarter 3\n";
+    print "Usage: get_member_quarterly_office_expenses.pl --member_id K000388 --year 2019 --quarter 3\n";
     exit;
 }
 
@@ -38,6 +38,6 @@ unless ( exists $config->{congress}->{key} && defined $config->{congress}->{key}
 }
 
 my $members_obj = ProPublica::Congress::Members->new( key => $config->{congress}->{key} );
-my $expenses = $members_obj->get_member_office_expenses( member_id => $opts{member_id}, year => $opts{year}, quarter => $opts{quarter} );
+my $expenses = $members_obj->get_member_quarterly_office_expenses( member_id => $opts{member_id}, year => $opts{year}, quarter => $opts{quarter} );
 
 print Data::Dumper::Dumper( $expenses );
