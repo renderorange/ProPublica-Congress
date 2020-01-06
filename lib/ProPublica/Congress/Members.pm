@@ -421,6 +421,49 @@ sub get_member_office_expenses_by_category {
     return $self->request( uri => $uri );
 }
 
+sub get_quarterly_office_expenses_by_category {
+    my $self = shift;
+    my $args = {
+        category => undef,
+        year     => undef,
+        quarter  => undef,
+        @_,
+    };
+
+    foreach my $key ( keys %{$args} ) {
+        if ( !defined $args->{$key} || $args->{$key} eq q{} ) {
+            die "The $key argument is required";
+        }
+    }
+
+    my @valid_categories = (
+        qw{
+            travel personnel rent-utilities other-services supplies
+            franked-mail printing equipment total
+            }
+    );
+
+    unless ( List::MoreUtils::any { $args->{category} eq $_ } @valid_categories ) {
+        die 'The ' . $args->{category} . ' category argument is unknown';
+    }
+
+    if ( $args->{year} !~ m/^\d+$/ || $args->{year} < 2009 ) {
+        die 'The year argument must be a >= 2009';
+    }
+
+    if ( $args->{quarter} !~ m/^[1-4]$/ ) {
+        die 'The quarter argument must be 1-4';
+    }
+
+    my $uri =
+          'https://api.propublica.org/congress/v1/office_expenses/category/'
+        . $args->{category} . q{/}
+        . $args->{year} . q{/}
+        . $args->{quarter} . '.json';
+
+    return $self->request( uri => $uri );
+}
+
 1;
 
 __END__
@@ -738,6 +781,58 @@ Must be one of the following:
 =item total
 
 =back
+
+=back
+
+=head3 RETURNS
+
+Hashref of decoded JSON from the request to the ProPublica API.
+
+=head2 get_quarterly_office_expenses_by_category
+
+Retrieve the amounts lawmakers spent in a specified category by quarter.
+
+Verifies arguments and creates the uri to pass to L<ProPublica::Congress>'s C<request> method.
+
+L<https://projects.propublica.org/api-docs/congress-api/members/#get-quarterly-office-expenses-by-category-for-a-specific-house-member>
+
+=head3 ARGUMENTS
+
+=over
+
+=item category
+
+Must be one of the following:
+
+=over
+
+=item travel
+
+=item personnel
+
+=item rent-utilities
+
+=item other-services
+
+=item supplies
+
+=item franked-mail
+
+=item printing
+
+=item equipment
+
+=item total
+
+=back
+
+=item year
+
+Must be >= 2009.
+
+=item quarter
+
+Must be 1-4.
 
 =back
 
