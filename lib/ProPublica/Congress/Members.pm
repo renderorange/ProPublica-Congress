@@ -464,6 +464,30 @@ sub get_quarterly_office_expenses_by_category {
     return $self->request( uri => $uri );
 }
 
+sub get_privately_funded_trips {
+    my $self = shift;
+    my $args = {
+        congress => undef,
+        @_,
+    };
+
+    if ( !defined $args->{congress} || $args->{congress} eq q{} ) {
+        die 'The congress argument is required';
+    }
+
+    if ( $args->{congress} !~ m/^\d+$/ || $args->{congress} < 1 ) {
+        die 'The congress argument must be a positive integer';
+    }
+
+    if ( $args->{congress} < 110 ) {
+        die 'The congress argument must be >= 110';
+    }
+
+    my $uri = 'https://api.propublica.org/congress/v1/' . $args->{congress} . '/private-trips.json';
+
+    return $self->request( uri => $uri );
+}
+
 1;
 
 __END__
@@ -833,6 +857,28 @@ Must be >= 2009.
 =item quarter
 
 Must be 1-4.
+
+=back
+
+=head3 RETURNS
+
+Hashref of decoded JSON from the request to the ProPublica API.
+
+=head2 get_privately_funded_trips
+
+Retrieve list of privately funded trips reported by all House members and staff in a particular Congress.
+
+Verifies arguments and creates the uri to pass to L<ProPublica::Congress>'s C<request> method.
+
+L<https://projects.propublica.org/api-docs/congress-api/members/#lists-of-members>
+
+=head3 ARGUMENTS
+
+=over
+
+=item congress
+
+Must be >= 110.
 
 =back
 
