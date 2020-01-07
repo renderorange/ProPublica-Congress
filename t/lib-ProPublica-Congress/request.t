@@ -15,32 +15,56 @@ use_ok( $class );
 no warnings 'redefine';
 
 my $fail_http = 0;
-
 my $fail_propublica = 0;
-my $fail_propublica_content = {
-    status => 'ERROR',
-    errors => [
-        { error => "not enough olives on ProPublica's pizza." },
-    ],
-};
-my $success_propublica_content = {
-    status  => 'OK',
-    results => [
-        { json => 'data' },
-    ],
-};
+my $fail_propublica_nest_error = 0;
 
 *HTTP::Tiny::request = sub {
     my $self = shift;
     my ( $method, $uri, $headers ) = @_;
 
-    my $content;
+    my $response;
 
-    my $response = {
-        success => ( $fail_http ? 0 : 1 ),
-        reason  => 'not enough olives on the pizza.',
-        content => ( $fail_propublica ? $fail_propublica_content : $success_propublica_content ),
-    };
+    if ( $fail_http ) {
+        if ( $fail_propublica ) {
+            # status OK from propublica, but status ERROR in the content.
+            # this is a really strange pattern for errors, but we have to work with it.
+            $response = {
+                status  => 'OK',
+                success => 1,
+                content => {
+                    status => 'ERROR',
+                }
+            };
+
+            if ( $fail_propublica_nest_error ) {
+                $response->{content}->{errors} = [
+                    { error => "not enough nested olives on ProPublica's pizza." },
+                ];
+            }
+            else {
+                $response->{content}->{error} = "not enough olives on ProPublica's pizza.";
+            }
+        }
+        else {
+            # the first error code check in request sub
+            $response = {
+                status  => 500,
+                success => '',
+                reason  => "not enough olives on the pizza.",
+            };
+        }
+    }
+    else {
+        $response = {
+            success => 1,
+            content => {
+                status  => 'OK',
+                results => [
+                    { json => 'data' },
+                ],
+            }
+        };
+    }
 
     return $response;
 };
@@ -63,7 +87,12 @@ HAPPY_PATH: {
     my $congress_obj = ProPublica::Congress->new( key => 'unitTESTkey' );
     my $data = $congress_obj->request( uri => 'https://fake.url.tld' );
 
-    is_deeply( $data, $success_propublica_content, 'returned contains expected data' );
+    is_deeply( $data,
+               { status  => 'OK',
+                 results => [
+                     { json => 'data' },
+                 ],
+               }, 'returned contains expected data' );
 }
 
 EXCEPTIONS: {
@@ -88,21 +117,29 @@ EXCEPTIONS: {
     like $@, qr/Request was not successful: not enough olives on the pizza/,
          'exception includes the reason from the http request';
 
+    $fail_propublica = 1;
+
+    dies_ok { $congress_obj->request( uri => 'https://fake.url.tld' ) }
+              "dies if return from ProPublica indicates ERROR";
+    like $@, qr/Request was not successful: not enough olives on ProPublica's pizza/,
+         'exception includes the reason from the http request';
+
+    $fail_propublica_nest_error = 1;
+
+    dies_ok { $congress_obj->request( uri => 'https://fake.url.tld' ) }
+              "dies if return from ProPublica indicates ERROR";
+    like $@, qr/Request was not successful: not enough nested olives on ProPublica's pizza/,
+         'exception includes the reason from the http request, with nested error';
+
     $fail_http = 0;
+    $fail_propublica = 0;
+    $fail_propublica_nest_error = 0;
     $fail_json = 1;
 
     dies_ok { $congress_obj->request( uri => 'https://fake.url.tld' ) }
               "dies if json decode wasn't successful";
     like $@, qr/Decode JSON from request was not successful: not enough olives on the pizza/,
          'exception includes the reason from the JSON decode';
-
-    $fail_json = 0;
-    $fail_propublica = 1;
-
-    dies_ok { $congress_obj->request( uri => 'https://fake.url.tld' ) }
-              "dies if return from ProPublica indicates ERROR";
-    like $@, qr/Request was not successful: not enough olives on ProPublica's pizza\./,
-         'exception includes the reason from the http request';
 }
 
 done_testing();
