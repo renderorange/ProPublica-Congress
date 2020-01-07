@@ -488,6 +488,26 @@ sub get_privately_funded_trips {
     return $self->request( uri => $uri );
 }
 
+sub get_member_privately_funded_trips {
+    my $self = shift;
+    my $args = {
+        member_id => undef,
+        @_,
+    };
+
+    if ( !defined $args->{member_id} || $args->{member_id} eq q{} ) {
+        die 'The member_id argument is required';
+    }
+
+    if ( $args->{member_id} !~ m/^[A-Z0-9]+$/ ) {
+        die "The member_id argument must be a string of alpha numeric characters";
+    }
+
+    my $uri = 'https://api.propublica.org/congress/v1/members/' . $args->{member_id} . '/private-trips.json';
+
+    return $self->request( uri => $uri );
+}
+
 1;
 
 __END__
@@ -744,7 +764,7 @@ Retrieve the amount a given lawmaker spent during a specified year and quarter. 
 
 Verifies arguments and creates the uri to pass to L<ProPublica::Congress>'s C<request> method.
 
-L<https://projects.propublica.org/api-docs/congress-api/members/#office-expenses>
+L<https://projects.propublica.org/api-docs/congress-api/members/#get-quarterly-office-expenses-by-a-specific-house-member>
 
 =head3 ARGUMENTS
 
@@ -818,7 +838,7 @@ Retrieve the amounts lawmakers spent in a specified category by quarter.
 
 Verifies arguments and creates the uri to pass to L<ProPublica::Congress>'s C<request> method.
 
-L<https://projects.propublica.org/api-docs/congress-api/members/#get-quarterly-office-expenses-by-category-for-a-specific-house-member>
+L<https://projects.propublica.org/api-docs/congress-api/members/#get-quarterly-office-expenses-for-a-specified-category>
 
 =head3 ARGUMENTS
 
@@ -870,7 +890,7 @@ Retrieve list of privately funded trips reported by all House members and staff 
 
 Verifies arguments and creates the uri to pass to L<ProPublica::Congress>'s C<request> method.
 
-L<https://projects.propublica.org/api-docs/congress-api/members/#lists-of-members>
+L<https://projects.propublica.org/api-docs/congress-api/members/#get-recent-privately-funded-trips>
 
 =head3 ARGUMENTS
 
@@ -879,6 +899,26 @@ L<https://projects.propublica.org/api-docs/congress-api/members/#lists-of-member
 =item congress
 
 Must be >= 110.
+
+=back
+
+=head3 RETURNS
+
+Hashref of decoded JSON from the request to the ProPublica API.
+
+=head2 get_member_privately_funded_trips
+
+Retrieve list of privately funded trips for a given lawmaker.  Member ids can be retrieved from C<get_members> or from L<http://bioguide.congress.gov/biosearch/biosearch.asp>.
+
+Verifies arguments and creates the uri to pass to L<ProPublica::Congress>'s C<request> method.
+
+L<https://projects.propublica.org/api-docs/congress-api/members/#get-recent-privately-funded-trips-by-a-specific-house-member>
+
+=head3 ARGUMENTS
+
+=over
+
+=item member_id
 
 =back
 
