@@ -30,6 +30,11 @@ HAPPY_PATH: {
         get_member_votes
         compare_member_vote_positions 
         compare_member_bill_sponsorships
+        get_member_quarterly_office_expenses
+        get_member_office_expenses_by_category
+        get_quarterly_office_expenses_by_category
+        get_privately_funded_trips
+        get_member_privately_funded_trips
     );
 
     can_ok( $class, $_ ) foreach @methods;
