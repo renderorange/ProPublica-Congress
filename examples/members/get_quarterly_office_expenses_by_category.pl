@@ -16,11 +16,12 @@ Getopt::Long::GetOptions(
     'category=s',
     'year=i',
     'quarter=i',
+    'offset=i',
     'help',
 );
 
 if ( $opts{help} || !$opts{category} || !$opts{year} || !$opts{quarter} ) {
-    print "Usage: get_quarterly_office_expenses_by_category.pl --category total --year 2019 --quarter 3\n";
+    print "Usage: get_quarterly_office_expenses_by_category.pl --category total --year 2019 --quarter 3 --offset 20\n";
     exit;
 }
 
@@ -38,6 +39,15 @@ unless ( exists $config->{congress}->{key} && defined $config->{congress}->{key}
 }
 
 my $members_obj = ProPublica::Congress::Members->new( key => $config->{congress}->{key} );
-my $expenses = $members_obj->get_quarterly_office_expenses_by_category( category => $opts{category}, year => $opts{year}, quarter => $opts{quarter} );
+
+my %options = (
+    category => $opts{category}, year => $opts{year}, quarter => $opts{quarter},
+);
+
+if ( defined $opts{offset} ) {
+    $options{offset} = $opts{offset};
+}
+
+my $expenses = $members_obj->get_quarterly_office_expenses_by_category( %options );
 
 print Data::Dumper::Dumper( $expenses );
