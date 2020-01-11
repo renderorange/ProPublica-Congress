@@ -510,6 +510,7 @@ sub get_member_privately_funded_trips {
     my $self = shift;
     my $args = {
         member_id => undef,
+        offset    => undef,
         @_,
     };
 
@@ -521,7 +522,15 @@ sub get_member_privately_funded_trips {
         die "The member_id argument must be a string of alpha numeric characters";
     }
 
+    if ( defined $args->{offset} && ( $args->{offset} eq q{} || $args->{offset} % 20 ) ) {
+        die 'The offset argument must be a multiple of 20';
+    }
+
     my $uri = 'https://api.propublica.org/congress/v1/members/' . $args->{member_id} . '/private-trips.json';
+
+    if ( defined $args->{offset} ) {
+        $uri .= '?offset=' . $args->{offset};
+    }
 
     return $self->request( uri => $uri );
 }
@@ -945,6 +954,10 @@ L<https://projects.propublica.org/api-docs/congress-api/members/#get-recent-priv
 =over
 
 =item member_id
+
+=item offset
+
+Must be a multiple of 20.
 
 =back
 
