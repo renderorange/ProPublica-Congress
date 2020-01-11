@@ -427,10 +427,11 @@ sub get_quarterly_office_expenses_by_category {
         category => undef,
         year     => undef,
         quarter  => undef,
+        offset   => undef,
         @_,
     };
 
-    foreach my $key ( keys %{$args} ) {
+    foreach my $key ( qw{ category year quarter } ) {
         if ( !defined $args->{$key} || $args->{$key} eq q{} ) {
             die "The $key argument is required";
         }
@@ -455,11 +456,19 @@ sub get_quarterly_office_expenses_by_category {
         die 'The quarter argument must be 1-4';
     }
 
+    if ( defined $args->{offset} && ( $args->{offset} eq q{} || $args->{offset} % 20 ) ) {
+        die 'The offset argument must be a multiple of 20';
+    }
+
     my $uri =
           'https://api.propublica.org/congress/v1/office_expenses/category/'
         . $args->{category} . q{/}
         . $args->{year} . q{/}
         . $args->{quarter} . '.json';
+
+    if ( defined $args->{offset} ) {
+        $uri .= '?offset=' . $args->{offset};
+    }
 
     return $self->request( uri => $uri );
 }
@@ -877,6 +886,10 @@ Must be >= 2009.
 =item quarter
 
 Must be 1-4.
+
+=item offset
+
+Must be a multiple of 20.
 
 =back
 
