@@ -30,7 +30,7 @@ HAPPY_PATH: {
     note( 'happy path' );
 
     my $members_obj = ProPublica::Congress::Members->new( key => 'unitTESTkey' );
-    my $trips = $members_obj->get_privately_funded_trips( congress => 110 );
+    my $trips = $members_obj->get_privately_funded_trips( congress => 110, offset => 20, );
 
     is_deeply( $trips, { json => 'data' }, 'returned contains expected data' );
 }
@@ -57,6 +57,16 @@ EXCEPTIONS: {
               "dies if congress argument is < 110";
     like $@, qr/The congress argument must be >= 110/,
          'exception indicates congress argument must be >= 110';
+
+    note( 'offset values' );
+    lives_ok { $members_obj->get_privately_funded_trips( congress => 110 ) }
+              'lives if offset argument is missing';
+    dies_ok { $members_obj->get_privately_funded_trips( congress => 110, offset => '' ) }
+              'dies if offset argument is empty string';
+    dies_ok { $members_obj->get_privately_funded_trips( congress => 110, offset => '21' ) }
+              'dies if offset argument is not multiple of 20';
+    like $@, qr/The offset argument must be a multiple of 20/,
+         'exception indicates offset must be a multiple of 20';
 }
 
 done_testing();
