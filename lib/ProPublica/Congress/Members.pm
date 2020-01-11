@@ -431,7 +431,7 @@ sub get_quarterly_office_expenses_by_category {
         @_,
     };
 
-    foreach my $key ( qw{ category year quarter } ) {
+    foreach my $key (qw{ category year quarter }) {
         if ( !defined $args->{$key} || $args->{$key} eq q{} ) {
             die "The $key argument is required";
         }
