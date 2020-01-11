@@ -477,6 +477,7 @@ sub get_privately_funded_trips {
     my $self = shift;
     my $args = {
         congress => undef,
+        offset   => undef,
         @_,
     };
 
@@ -492,7 +493,15 @@ sub get_privately_funded_trips {
         die 'The congress argument must be >= 110';
     }
 
+    if ( defined $args->{offset} && ( $args->{offset} eq q{} || $args->{offset} % 20 ) ) {
+        die 'The offset argument must be a multiple of 20';
+    }
+
     my $uri = 'https://api.propublica.org/congress/v1/' . $args->{congress} . '/private-trips.json';
+
+    if ( defined $args->{offset} ) {
+        $uri .= '?offset=' . $args->{offset};
+    }
 
     return $self->request( uri => $uri );
 }
@@ -912,6 +921,10 @@ L<https://projects.propublica.org/api-docs/congress-api/members/#get-recent-priv
 =item congress
 
 Must be >= 110.
+
+=item offset
+
+Must be a multiple of 20.
 
 =back
 
