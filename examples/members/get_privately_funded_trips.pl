@@ -14,11 +14,12 @@ use ProPublica::Congress::Members;
 Getopt::Long::GetOptions(
     \my %opts,
     'congress=i',
+    'offset=i',
     'help',
 );
 
 if ( $opts{help} || !$opts{congress} ) {
-    print "Usage: get_privately_funded_trips.pl --congress 110\n";
+    print "Usage: get_privately_funded_trips.pl --congress 110 --offset 20\n";
     exit;
 }
 
@@ -36,6 +37,15 @@ unless ( exists $config->{congress}->{key} && defined $config->{congress}->{key}
 }
 
 my $members_obj = ProPublica::Congress::Members->new( key => $config->{congress}->{key} );
-my $trips = $members_obj->get_privately_funded_trips( congress => $opts{congress} );
+
+my %options = (
+    congress => $opts{congress},
+);
+
+if ( defined $opts{offset} ) {
+    $options{offset} = $opts{offset};
+}
+
+my $trips = $members_obj->get_privately_funded_trips( %options );
 
 print Data::Dumper::Dumper( $trips );
