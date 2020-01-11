@@ -31,7 +31,7 @@ HAPPY_PATH: {
 
     my $members_obj = ProPublica::Congress::Members->new( key => 'unitTESTkey' );
     my $expenses = $members_obj->get_quarterly_office_expenses_by_category(
-        category => 'total', year => 2009, quarter => 4,
+        category => 'total', year => 2009, quarter => 4, offset => 20,
     );
 
     is_deeply( $expenses, { json => 'data' }, 'returned contains expected data' );
@@ -77,6 +77,16 @@ EXCEPTIONS: {
          'exception indicates quarter argument must be 1-4';
     dies_ok { $members_obj->get_quarterly_office_expenses_by_category( category => 'total', year => 2009, quarter => 'a' ) }
               'dies if quarter argument is a';
+
+    note( 'offset values' );
+    lives_ok { $members_obj->get_quarterly_office_expenses_by_category( category => 'total', year => 2009, quarter => 4 ) }
+              'lives if offset argument is missing';
+    dies_ok { $members_obj->get_quarterly_office_expenses_by_category( category => 'total', year => 2009, quarter => 4, offset => '' ) }
+              'dies if offset argument is empty string';
+    dies_ok { $members_obj->get_quarterly_office_expenses_by_category( category => 'total', year => 2009, quarter => 4, offset => '21' ) }
+              'dies if offset argument is not multiple of 20';
+    like $@, qr/The offset argument must be a multiple of 20/,
+         'exception indicates offset must be a multiple of 20';
 }
 
 done_testing();
