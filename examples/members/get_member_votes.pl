@@ -14,11 +14,12 @@ use ProPublica::Congress::Members;
 Getopt::Long::GetOptions(
     \my %opts,
     'member_id=s',
+    'offset=i',
     'help',
 );
 
 if ( $opts{help} || !$opts{member_id} ) {
-    print "Usage: get_member_votes.pl --member_id K000388\n";
+    print "Usage: get_member_votes.pl --member_id K000388 --offset 20\n";
     exit;
 }
 
@@ -36,6 +37,15 @@ unless ( exists $config->{congress}->{key} && defined $config->{congress}->{key}
 }
 
 my $members_obj = ProPublica::Congress::Members->new( key => $config->{congress}->{key} );
-my $votes = $members_obj->get_member_votes( member_id => $opts{member_id} );
+
+my %options = (
+    member_id => $opts{member_id},
+);
+
+if ( defined $opts{offset} ) {
+    $options{offset} = $opts{offset};
+}
+
+my $votes = $members_obj->get_member_votes( %options );
 
 print Data::Dumper::Dumper( $votes );
